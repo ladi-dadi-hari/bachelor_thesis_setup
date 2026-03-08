@@ -1,0 +1,47 @@
+[
+  {
+    "name": "NS",
+    "type": "ns",
+    "ip": "192.168.4.41",
+    "protocol": "syslog",
+    "impact": "high",
+    "zone": "L3",        
+    "state": "on"
+  },
+  {
+    "name": "Main-PLC",
+    "type": "plc",
+    "ip": "192.168.2.10",
+    "protocol": "syslog",
+    "impact": "high",
+    "zone": "L2",        
+    "state": "on"
+  },
+  {
+    "name": "SCADA",
+    "type": "server",
+    "ip": "192.168.3.3",
+    "protocol": "syslog",
+    "impact": "medium",
+    "zone": "L3",    
+    "state": "on"
+  },
+  {
+    "name": "L3-Router",
+    "type": "switch",
+    "ip": "192.168.3.2",
+    "protocol": "syslog",    
+    "impact": "low",
+    "zone": "L3",    
+    "state": "on"
+  },
+  {
+    "name": "EWS",
+    "type": "workstation",
+    "ip": "192.168.3.4",
+    "protocol": "syslog",
+    "impact": "medium",
+    "zone": "L3",    
+    "state": "on"
+  }
+]

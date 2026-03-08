@@ -1,0 +1,308 @@
+name: labshock
+
+networks:
+  l2_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.2.0/24
+
+  l3_scada_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.3.0/24
+  
+  l3_security_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.4.0/24
+  
+  l3_pentest_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.5.0/24
+  
+  l3_router_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.0.0/24
+
+  dmz_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/24
+  
+  it_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.100.0/24
+  
+  mirror_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.200.0/24
+  
+services:
+
+  sensor-sim:
+    build: ./sensor-sim
+    container_name: labshock-sensor-sim-1
+    networks:
+      l2_network:
+        ipv4_address: 192.168.2.50
+
+
+  portal:
+    image: zakharbz/labshock-portal:latest
+    volumes:
+      - portal-data:/app/config/
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/app/docker/
+    ports:
+      - "443:443"   
+    environment:
+      PORTAL_VERSION: 2.0.2
+      PLATFORM_URL: https://world.labshocksecurity.com
+
+  router:
+    build: ./router/
+    cap_add:
+      - NET_ADMIN
+    networks:
+      l2_network:
+        ipv4_address: 192.168.2.2
+      l3_scada_network:
+        ipv4_address: 192.168.3.2
+      l3_security_network:
+        ipv4_address: 192.168.4.2
+      l3_pentest_network:
+        ipv4_address: 192.168.5.2
+      l3_router_network:
+        ipv4_address: 192.168.0.3
+      mirror_network:
+        ipv4_address: 172.16.200.3
+    ports:
+      - "1444:5443"
+    depends_on:
+      - portal
+    volumes:
+      - portal-data:/app/portal/
+      
+  plc:
+    build: ./plc/
+    cap_add:
+      - NET_ADMIN
+    networks:
+      l2_network:
+        ipv4_address: 192.168.2.10
+    ports:
+      - "8080:8080"
+
+
+  scada:
+    build: ./scada/
+    cap_add:
+      - NET_ADMIN
+    networks:
+      l3_scada_network:
+        ipv4_address: 192.168.3.20
+    ports:
+      - '1881:1881'
+    dns:
+     - 127.0.0.11
+
+  ews:
+    build: ./ews/
+    cap_add:
+      - NET_ADMIN
+    networks:
+      l3_scada_network:
+        ipv4_address: 192.168.3.11
+    ports:
+      - "5911:5911"
+
+  ids:
+    build: ./ids/
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    privileged: true
+    networks:
+      l3_security_network:
+        ipv4_address: 192.168.4.41
+      mirror_network:
+        ipv4_address: 172.16.200.2
+    ports:
+      - "1443:1443"        
+    environment:
+      LICENSE_URL: localhost     
+    volumes:
+      - portal-data:/app/portal/
+    depends_on:
+      - portal
+
+  collector:
+    build: ./collector/
+    cap_add:
+      - NET_ADMIN
+    networks:
+      l3_security_network:
+        ipv4_address: 192.168.4.40
+    ports:
+      - "2443:2443"
+    volumes:
+      - portal-data:/app/portal/
+    depends_on:
+      - portal
+
+  pentest:
+    build: ./pentest/
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      l3_pentest_network:
+        ipv4_address: 192.168.5.50
+    ports:
+      - "2222:22"
+      - "3443:3443"
+    volumes:
+      - portal-data:/app/portal/
+    depends_on:
+      - portal
+
+  dmz-router:
+    build: ./dmz-router/
+    cap_add:
+      - NET_ADMIN
+    networks:
+      l3_router_network:
+        ipv4_address: 192.168.0.2
+      dmz_network:
+        ipv4_address: 172.16.0.2
+      it_network:
+        ipv4_address: 172.16.100.2
+      mirror_network:
+        ipv4_address: 172.16.200.4
+    ports:
+      - "5443:5443"
+    volumes:
+      - portal-data:/app/portal/
+    depends_on:
+      - portal
+
+  dmz-collector:
+    build: ./dmz-collector/
+    cap_add:
+      - NET_ADMIN
+    networks:
+      dmz_network:
+        ipv4_address: 172.16.0.40
+    ports:
+      - "6443:2443"
+    volumes:
+      - portal-data:/app/portal/
+    depends_on:
+      - portal
+
+  dmz-transfer:
+    build: ./dmz-transfer/
+    cap_add:
+      - NET_ADMIN
+    networks:
+      dmz_network:
+        ipv4_address: 172.16.0.21
+    ports:
+      - "4443:80"
+    volumes:
+      - portal-data:/app/portal/
+    depends_on:
+      - portal
+
+  dmz-pentest:
+    build: ./dmz-pentest/
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      dmz_network:
+        ipv4_address: 172.16.0.50
+    ports:
+      - "3222:22"
+      - "7443:3443"
+    volumes:
+      - portal-data:/app/portal/
+    depends_on:
+      - portal
+
+  it-splunk:
+    image: splunk/splunk:10.0
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
+      - SPLUNK_PASSWORD=labshock
+    ports:
+      - "8443:8000"
+    networks:
+      it_network:
+        ipv4_address: 172.16.100.40
+    profiles:
+      - it-splunk
+    mem_limit: 2g
+    volumes:
+      - ./splunk-data/etc:/opt/splunk/etc
+      - ./splunk-data/var:/opt/splunk/var    
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    networks:
+      it_network:
+        ipv4_address: 172.16.100.52
+    profiles:
+      - it-elk
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.14.1
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - "9443:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      it_network:
+        ipv4_address: 172.16.100.51
+    profiles:
+      - it-elk
+
+  logstash:
+    build:
+      context: ./it-elk/logstash/
+    depends_on:
+      - elasticsearch
+    networks:
+      it_network:
+        ipv4_address: 172.16.100.50
+    profiles:
+      - it-elk
+      
+volumes:
+  portal-data:
+  splunk-data:

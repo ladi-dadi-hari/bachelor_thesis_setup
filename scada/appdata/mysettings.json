@@ -1,0 +1,24 @@
+{
+    "language": "en",
+    "uiPort": 1881,
+    "secureEnabled": false,
+    "tokenExpiresIn": "",
+    "broadcastAll": false,
+    "smtp": {
+        "host": "",
+        "port": 587,
+        "mailsender": "",
+        "username": ""
+    },
+    "daqstore": {
+        "type": "SQlite",
+        "credentials": {},
+        "retention": "year1"
+    },
+    "alarms": {
+        "retention": "year1"
+    },
+    "logFull": false,
+    "syslogHost": "192.168.4.40",
+    "syslogPort": 514
+}

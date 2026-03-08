@@ -1,0 +1,1 @@
+FROM zakharbz/labshock-portal:v2.0.0

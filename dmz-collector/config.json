@@ -1,0 +1,1 @@
+{"collector_id": "DMZ-Collector", "server_ip": "0.0.0.0", "server_port": "514", "syslog_ip": "172.16.100.40", "syslog_port": "514", "syslog_enabled": true}

@@ -1,0 +1,74 @@
+{
+  "rules": [
+    {
+      "src": "172.16.0.0/24",
+      "dst": "172.16.100.0/24",
+      "port": "514",
+      "proto": "udp",
+      "action": "ACCEPT"
+    },
+    {
+      "src": "172.16.0.0/24",
+      "dst": "192.168.3.0/24",
+      "port": "5911",
+      "proto": "tcp",
+      "action": "ACCEPT"
+    },
+    {
+      "src": "172.16.0.0/24",
+      "dst": "192.168.3.0/24",
+      "port": "22",
+      "proto": "tcp",
+      "action": "ACCEPT"
+    },
+    {
+      "src": "172.16.0.0/24",
+      "dst": "any",
+      "port": "any",
+      "proto": "any",
+      "action": "DROP"
+    },
+    {
+      "src": "192.168.3.0/24",
+      "dst": "172.16.0.0/24",
+      "port": "21",
+      "proto": "tcp",
+      "action": "ACCEPT"
+    },
+    {
+      "src": "192.168.3.0/24",
+      "dst": "172.16.0.0/24",
+      "port": "49152:65535",
+      "proto": "tcp",
+      "action": "ACCEPT"
+    },
+    {
+      "src": "192.168.3.0/24",
+      "dst": "172.16.0.0/24",
+      "port": "80",
+      "proto": "tcp",
+      "action": "ACCEPT"
+    },
+    {
+      "src": "192.168.4.0/24",
+      "dst": "172.16.0.40",
+      "port": "514",
+      "proto": "udp",
+      "action": "ACCEPT"
+    },
+    {
+      "src": "192.168.0.0/16",
+      "dst": "any",
+      "port": "any",
+      "proto": "any",
+      "action": "DROP"
+    },
+    {
+      "src": "any",
+      "dst": "any",
+      "port": "any",
+      "proto": "any",
+      "action": "DROP"
+    }
+  ]
+}

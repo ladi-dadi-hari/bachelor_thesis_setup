@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Main-PLC",
+    "type": "plc",
+    "ip": "192.168.2.10",
+    "state": "on",
+    "impact": "high",
+    "zone": "L2"
+  },
+  {
+    "name": "SCADA",
+    "type": "server",
+    "ip": "192.168.3.20",
+    "state": "on",
+    "impact": "medium",
+    "zone": "L3"
+  },
+  {
+    "name": "EWS",
+    "type": "workstation",
+    "ip": "192.168.3.11",
+    "state": "on",
+    "impact": "medium",
+    "zone": "L3"
+  },
+  {
+    "name": "L3-Router",
+    "type": "switch",
+    "ip": "192.168.3.2",
+    "impact": "low",
+    "zone": "L3",
+    "state": "on"
+  },
+  {
+    "name": "Collector",
+    "type": "switch",
+    "ip": "192.168.4.40",
+    "impact": "low",
+    "zone": "L3",
+    "state": "on"
+  },
+  {
+    "name": "DMZ-Transfer",
+    "type": "server",
+    "ip": "172.16.0.21",
+    "state": "on",
+    "impact": "low",
+    "zone": "DMZ"
+  },
+  {
+    "name": "DMZ-Router",
+    "type": "switch",
+    "ip": "172.16.0.2",
+    "state": "on",
+    "impact": "low",
+    "zone": "DMZ"
+  },
+  {
+    "name": "DMZ-Collector",
+    "type": "collector",
+    "ip": "172.16.0.40",
+    "impact": "low",
+    "zone": "DMZ",
+    "state": "on"
+  },
+  {
+    "name": "SIEM",
+    "type": "workstation",
+    "ip": "10.110.0.40",
+    "impact": "low",
+    "zone": "IT",
+    "state": "on"
+  }
+]

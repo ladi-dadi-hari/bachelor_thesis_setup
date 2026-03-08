@@ -1,0 +1,1 @@
+{"ns_id": "ns-1", "sniffing_interface": "172.16.200.2", "sniffing_enabled": true, "syslog_ip": "192.168.4.40", "syslog_port": "514", "syslog_enabled": true}

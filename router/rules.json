@@ -1,0 +1,11 @@
+{
+  "rules": [
+    {
+      "src": "any",
+      "dst": "any",
+      "port": "any",
+      "proto": "any",
+      "action": "ACCEPT"
+    }
+  ]
+}
